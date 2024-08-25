@@ -1,61 +1,74 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require('cors');
+const express = require('express');
+const cors = require('cors');  // Import cors for handling CORS issues
 const app = express();
+const port = process.env.PORT || 3000;
 
-dotenv.config();
-// Middleware to parse JSON request bodies
-app.use(express.json());
-app.use(cors());
+// Middleware
+app.use(cors());  // Enable CORS
+app.use(express.json());  // Parse JSON bodies
 
-// User data
-const userData = {
-    user_id: process.env.USER_ID,
-    email: process.env.EMAIL,
-    roll_number: process.env.ROLL_NUMBER
-};
+// Handle POST requests to /api/data
+app.post('/api/data', (req, res) => {
+    try {
+        const data = req.body;
 
-// Function to process the data
-const processData = (data) => {
-  const numbers = data.filter((item) => /^\d+$/.test(item));
-  const alphabets = data.filter((item) => /^[a-zA-Z]$/.test(item));
-  const lowercaseAlphabets = alphabets.filter(
-    (item) => item === item.toLowerCase()
-  );
-  const highestLowercaseAlphabet =
-    lowercaseAlphabets.length > 0 ? [lowercaseAlphabets.sort().pop()] : [];
-  return { numbers, alphabets, highestLowercaseAlphabet };
-};
+        // Validate input
+        if (!Array.isArray(data)) {
+            return res.status(400).json({ error: 'Invalid input: Data should be an array' });
+        }
 
-// POST endpoint
-app.post("/bfhl", (req, res) => {
-  const { data } = req.body;
-  if (!Array.isArray(data)) {
-    return res
-      .status(400)
-      .json({ is_success: false, message: "Invalid data format" });
-  }
+        // Process data
+        const processedData = processData(data);
 
-  const { numbers, alphabets, highestLowercaseAlphabet } = processData(data);
-
-  res.json({
-    is_success: true,
+        // Send response
+        res.json({
+    status: true,
     user_id: userData.user_id,
     email: userData.email,
     roll_number: userData.roll_number,
-    numbers,
-    alphabets,
-    highest_lowercase_alphabet: highestLowercaseAlphabet,
-  });
+            ...processedData
+        });
+    } catch (error) {
+        console.error('Error processing request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
-// GET endpoint
-app.get("/bfhl", (req, res) => {
-  res.status(200).json({ operation_code: 1398 });
+// Handle GET requests to /api/data
+app.get('/api/data', (req, res) => {
+    res.json({ operation_code: '1398' });
 });
+
+// Optionally, handle root URL requests
+app.get('/', (req, res) => {
+    res.send('Welcome to the API');
+});
+
+// Function to process data
+const processData = (data) => {
+    const numbers = [];
+    const alphabets = [];
+    let highestLowercaseAlphabet = '';
+
+    data.forEach(item => {
+        if (!isNaN(item)) {
+            numbers.push(item);
+        } else if (typeof item === 'string' && item.match(/[a-zA-Z]/)) {
+            alphabets.push(item);
+            if (item === item.toLowerCase() && item > highestLowercaseAlphabet) {
+                highestLowercaseAlphabet = item;
+            }
+        }
+    });
+
+    return {
+        numbers,
+        alphabets,
+        highestLowercaseAlphabet: highestLowercaseAlphabet ? [highestLowercaseAlphabet] : []
+    };
+};
 
 // Start the server
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
