@@ -8,7 +8,7 @@ app.use(cors());  // Enable CORS
 app.use(express.json());  // Parse JSON bodies
 
 // Handle POST requests to /api/data
-app.post('/api/data', (req, res) => {
+app.post('/bfhl', (req, res) => {
     try {
         const data = req.body;
 
@@ -35,7 +35,7 @@ app.post('/api/data', (req, res) => {
 });
 
 // Handle GET requests to /api/data
-app.get('/api/data', (req, res) => {
+app.get('/bfhl', (req, res) => {
     res.json({ operation_code: '1398' });
 });
 
