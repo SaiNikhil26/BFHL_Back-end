@@ -22,10 +22,10 @@ app.post('/api/data', (req, res) => {
 
         // Send response
         res.json({
-    status: true,
-    user_id: userData.user_id,
-    email: userData.email,
-    roll_number: userData.roll_number,
+            status: 'true',
+            user_id: 'BurlagaddaSaiNikhil',
+            email: 'burlagaddasai.nikhil2021@vitstudent.ac.in',
+            roll_number: '21BAI11398',
             ...processedData
         });
     } catch (error) {
