@@ -7,10 +7,10 @@ const port = process.env.PORT || 3000;
 app.use(cors());  // Enable CORS
 app.use(express.json());  // Parse JSON bodies
 
-// Handle POST requests to /api/data
+// Handle POST requests to /bfhl
 app.post('/bfhl', (req, res) => {
     try {
-        const data = req.body;
+        const { data } = req.body;
 
         // Validate input
         if (!Array.isArray(data)) {
@@ -23,7 +23,7 @@ app.post('/bfhl', (req, res) => {
         // Send response
         res.json({
             status: 'true',
-            user_id: 'BurlagaddaSaiNikhil',
+            user_id: 'BurlagaddaSaiNikhil2642004',
             email: 'burlagaddasai.nikhil2021@vitstudent.ac.in',
             roll_number: '21BAI11398',
             ...processedData
@@ -34,7 +34,7 @@ app.post('/bfhl', (req, res) => {
     }
 });
 
-// Handle GET requests to /api/data
+// Handle GET requests to /bfhl
 app.get('/bfhl', (req, res) => {
     res.json({ operation_code: '1398' });
 });
